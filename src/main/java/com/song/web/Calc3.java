@@ -68,6 +68,7 @@ public class Calc3 extends HttpServlet {
 		if(operator != null && operator.equals("C")) {
 			expCookie.setMaxAge(0);
 		}
+//		expCookie.setPath("/clac3"); 원래는이렇게 쓰는데 get, post를 각각 요청하려면 이방법으로는 url중복추가가 안됨.
 		response.addCookie(expCookie);
 		response.sendRedirect("calcpage");
 		
