@@ -1,4 +1,4 @@
-package com.song.web.filter;
+package com.song.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
