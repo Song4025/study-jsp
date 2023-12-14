@@ -24,14 +24,14 @@ public class NoticeListController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		List<Notice> list = new ArrayList<>();
+		List<Notice> list = new ArrayList<Notice>();
 				
 		String url = "jdbc:oracle:thin:@localhost:1521/xe";
 		String sql = "SELECT * FROM NOTICE";
 
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection(url, "SYSTEM", "gjgkgl135");
+			Connection con = DriverManager.getConnection(url, "SONG", "gjgkgl135");
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery(sql);
 
@@ -67,7 +67,7 @@ public class NoticeListController extends HttpServlet {
 		
 		request.setAttribute("list", list);
 		
-		request.getRequestDispatcher("/notice/list.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/notice/list.jsp").forward(request, response);
 		
 		
 	}

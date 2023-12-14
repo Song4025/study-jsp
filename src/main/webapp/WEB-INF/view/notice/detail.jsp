@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 
@@ -25,7 +27,7 @@
 <body>
     <!-- header 부분 -->
 
-    <header id="header">
+	<header id="header">
         
         <div class="content-container">
             <!-- ---------------------------<header>--------------------------------------- -->
@@ -77,7 +79,7 @@
                         <h1 class="hidden">고객메뉴</h1>
                         <ul class="linear-layout">
                             <li><a href="/member/home"><img src="/images/txt-mypage.png" alt="마이페이지" /></a></li>
-                            <li><a href="/notice/list.html"><img src="/images/txt-customer.png" alt="고객센터" /></a></li>
+                            <li><a href="/notice/list.jsp"><img src="/images/txt-customer.png" alt="고객센터" /></a></li>
                         </ul>
                     </nav>
 
@@ -129,90 +131,89 @@
 			</aside>
 			<!-- --------------------------- main --------------------------------------- -->
 
-
-
-		<main class="main">
-			<h2 class="main title">공지사항</h2>
 			
-			<div class="breadcrumb">
-				<h3 class="hidden">경로</h3>
-				<ul>
-					<li>home</li>
-					<li>고객센터</li>
-					<li>공지사항</li>
-				</ul>
-			</div>
-			
-			<div class="search-form margin-top first align-right">
-				<h3 class="hidden">공지사항 검색폼</h3>
-				<form class="table-form">
-					<fieldset>
-						<legend class="hidden">공지사항 검색 필드</legend>
-						<label class="hidden">검색분류</label>
-						<select name="f">
-							<option  value="title">제목</option>
-							<option  value="writerId">작성자</option>
-						</select> 
-						<label class="hidden">검색어</label>
-						<input type="text" name="q" value=""/>
-						<input class="btn btn-search" type="submit" value="검색" />
-					</fieldset>
-				</form>
-			</div>
-			
-			<div class="notice margin-top">
-				<h3 class="hidden">공지사항 목록</h3>
-				<table class="table">
-					<thead>
-						<tr>
-							<th class="w60">번호</th>
-							<th class="expand">제목</th>
-							<th class="w100">작성자</th>
-							<th class="w100">작성일</th>
-							<th class="w60">조회수</th>
-						</tr>
-					</thead>
-					<tbody>
 
-					<tr>
-						<td></td>
-						<td class="title indent text-align-left"><a href="detail?id=<%= rs.getInt("ID")%>"></a></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
 
-					</tbody>
-				</table>
-			</div>
-			
-			<div class="indexer margin-top align-right">
-				<h3 class="hidden">현재 페이지</h3>
-				<div><span class="text-orange text-strong">1</span> / 1 pages</div>
-			</div>
-
-			<div class="margin-top align-center pager">	
-		
-	<div>
-		
-		
-		<span class="btn btn-prev" onclick="alert('이전 페이지가 없습니다.');">이전</span>
-		
-	</div>
-	<ul class="-list- center">
-		<li><a class="-text- orange bold" href="?p=1&t=&q=" >1</a></li>
+			<main>
+				<h2 class="main title">공지사항</h2>
 				
-	</ul>
-	<div>
-		
-		
-			<span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
-		
-	</div>
-	
-			</div>
-		</main>
-		
+				<div class="breadcrumb">
+					<h3 class="hidden">breadlet</h3>
+					<ul>
+						<li>home</li>
+						<li>고객센터</li>
+						<li>공지사항</li>
+					</ul>
+				</div>
+				
+				<div class="margin-top first">
+						<h3 class="hidden">공지사항 내용</h3>
+						<table class="table">
+							<tbody>
+								<tr>
+									<th>제목</th>
+									<td class="text-align-left text-indent text-strong text-orange" colspan="3">${n.title}</td>
+								</tr>
+								<tr>
+
+									<th>작성일</th>
+									<td class="text-align-left text-indent" colspan="3"><fmt:formatDate pattern="yyyy-MM-dd hh:mm" value="${n.regDate}" /></td>
+								</tr>
+								<tr>
+									<th>작성자</th>
+									<td>${n.writerId}</td>
+									<th>조회수</th>
+									<td>${n.hit}</td>
+								</tr>
+								<tr>
+									<th>첨부파일</th>
+									<td colspan="3" style="text-align:left; text-indent:10px;">
+									<c:forTokens var="fileName" items="${n.files}" delims="," varStatus="st">
+										<c:set var="style" value="" />
+										<c:if test="${fn:endsWith(fileName, '.png')}" >
+											<c:set var="style" value="font-weight:bold; color:red" />
+										</c:if>
+										<a href="${fileName}" style="${style};">${fn:toUpperCase(fileName)}</a>
+										<c:if test="${!st.last}">
+											/
+										</c:if>
+									</c:forTokens>	
+									</td>
+								</tr>
+								<tr class="content">
+									<td colspan="4">${n.content}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					
+					<div class="margin-top text-align-center">
+						<a class="btn btn-list" href="list">목록</a>
+					</div>
+					
+					<div class="margin-top">
+						<table class="table border-top-default">
+							<tbody>
+								
+								<tr>
+									<th>다음글</th>
+									<td colspan="3"  class="text-align-left text-indent">다음글이 없습니다.</td>
+								</tr>
+								
+									
+								
+								
+								<tr>
+									<th>이전글</th>
+									<td colspan="3"  class="text-align-left text-indent"><a class="text-blue text-strong" href="">스프링 DI 예제 코드</a></td>
+								</tr>
+								
+								
+							</tbody>
+						</table>
+					</div>			
+					
+			</main>		
 			
 		</div>
 	</div>
@@ -254,3 +255,4 @@
     </body>
     
     </html>
+    

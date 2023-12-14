@@ -28,7 +28,7 @@ public class NoticeDetailController extends HttpServlet {
 
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			Connection con = DriverManager.getConnection(url, "SYSTEM", "gjgkgl135");
+			Connection con = DriverManager.getConnection(url, "SONG", "gjgkgl135");
 			PreparedStatement st = con.prepareStatement(sql);
 			st.setInt(1, id);
 
@@ -76,6 +76,6 @@ public class NoticeDetailController extends HttpServlet {
 		
 		// request
 		// 진행된다음 view로 전이되어야 함. redirect:다른페이지로 가버려야할 때, forward: 작업했던내용을 이어받아서 전이되는 방식
-		request.getRequestDispatcher("/notice/detail.jsp").forward(request, response);
+		request.getRequestDispatcher("/WEB-INF/view/notice/detail.jsp").forward(request, response);
 	}
 }
