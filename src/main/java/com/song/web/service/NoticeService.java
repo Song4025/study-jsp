@@ -103,8 +103,9 @@ public class NoticeService {
 			PreparedStatement st = con.prepareStatement(sql);
 			st.setString(1, "%"+query+"%");
 			ResultSet rs = st.executeQuery();
-
-			count = rs.getInt("count");
+			
+			if(rs.next())
+				count = rs.getInt("count");
 			
 			rs.close();
 			st.close();
@@ -221,7 +222,7 @@ public class NoticeService {
 				+ "FROM ("
 				+ "FROM NOTICE"
 				+ "SELECT ID"
-				+ "WHERE REGDATE > (SELECT REGDATE FROM NOTICE WHERE ID=3) "
+				+ "WHERE REGDATE > (SELECT REGDATE FROM NOTICE WHERE ID=?) "
 				+ "ORDER BY REGDATE, ID "
 				+ ") "
 				+ "WHERE ROWNUM = 1;";
