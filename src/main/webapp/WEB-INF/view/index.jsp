@@ -8,8 +8,8 @@
     <meta charset="UTF-8">
     <title>공지사항목록</title>
 
-    <link href="/JSPPrj/css/layout.css" type="text/css" rel="stylesheet" />
-    <link href="/JSPPrj/css/index.css" type="text/css" rel="stylesheet" />
+    <link href="/css/layout.css" type="text/css" rel="stylesheet" />
+    <link href="/css/index.css" type="text/css" rel="stylesheet" />
 </head>
 
 <body>
@@ -97,7 +97,7 @@
 
                 <li class="banner1">
                     <a href="customer/event/1">
-                        <img src="admin/board/event/1/banner-java.png" data-id="1" style="cursor: pointer;" />
+                        <img src="WEB-INF/view/admin/board/event/1/banner-java.png" data-id="1" style="cursor: pointer;" />
                     </a>
                 </li>
 

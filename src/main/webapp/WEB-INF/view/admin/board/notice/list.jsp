@@ -1,10 +1,9 @@
-<%@page import="com.song.web.entity.Notice"%>
-<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <!DOCTYPE html>
 <html>
 
@@ -19,7 +18,7 @@
 	height: inherit;
 	display: flex;
 	align-items: center;
-	background: url("../../images/customer/visual.png") no-repeat center;
+	background: url("/images/mypage/visual.png") no-repeat center;
 }
 </style>
 </head>
@@ -105,28 +104,21 @@
 
 
 			<aside class="aside">
-				<h1>고객센터</h1>
+				<h1>ADMIN PAGE</h1>
 
 				<nav class="menu text-menu first margin-top">
-					<h1>고객센터메뉴</h1>
+					<h1>마이페이지</h1>
 					<ul>
-						<li><a class="current" href="/customer/notice">공지사항</a></li>
-						<li><a class="" href="/customer/faq">자주하는 질문</a></li>
-						<li><a class="" href="/customer/question">수강문의</a></li>
-						<li><a class="" href="/customer/event">이벤트</a></li>
-
+						<li><a href="/admin/index.html">관리자홈</a></li>
+						<li><a href="/teacher/index.html">선생님페이지</a></li>
+						<li><a href="/student/index.html">수강생페이지</a></li>
 					</ul>
 				</nav>
 
-
-				<nav class="menu">
-					<h1>협력업체</h1>
+				<nav class="menu text-menu">
+					<h1>알림관리</h1>
 					<ul>
-						<li><a target="_blank" href="http://www.notepubs.com"><img
-								src="/images/notepubs.png" alt="노트펍스" /></a></li>
-						<li><a target="_blank" href="http://www.namoolab.com"><img
-								src="/images/namoolab.png" alt="나무랩연구소" /></a></li>
-
+						<li><a href="/admin/board/notice/list.html">공지사항</a></li>
 					</ul>
 				</nav>
 
@@ -163,57 +155,63 @@
 					</form>
 				</div>
 
-				<div class="notice margin-top">
-					<h3 class="hidden">공지사항 목록</h3>
-					<table class="table">
-						<thead>
-							<tr>
-								<th class="w60">번호</th>
-								<th class="expand">제목</th>
-								<th class="w100">작성자</th>
-								<th class="w100">작성일</th>
-								<th class="w60">조회수</th>
-							</tr>
-						</thead>
-						<tbody>
+				<form action="list" method="post">
 
-							<%-- 					<% 
-					List<Notice> list = (List<Notice>)request.getAttribute("list");
-					for(Notice n : list){
-						pageContext.setAttribute("n", n);
-						
-					%> --%>
-							<c:forEach var="n" items="${list}">
+					<div class="notice margin-top">
+						<h3 class="hidden">공지사항 목록</h3>
+						<table class="table">
+							<thead>
 								<tr>
-									<td>${n.id}</td>
-									<td class="title indent text-align-left"><a
-										href="detail?id=${n.id}">${n.title} <span>[${n.cmtCount}]</span></a></td>
-									<td>${n.writerId}</td>
-									<td><fmt:formatDate pattern="yyyy-MM-dd"
-											value="${n.regDate}" /></td>
-									<td><fmt:formatNumber value="${n.hit}" pattern="#,####"
-											type="number" /></td>
+									<th class="w60">번호</th>
+									<th class="expand">제목</th>
+									<th class="w100">작성자</th>
+									<th class="w100">작성일</th>
+									<th class="w60">조회수</th>
+									<th class="w40">공개</th>
+									<th class="w40">삭제</th>
 								</tr>
-							</c:forEach>
-							<%-- <%} %> --%>
+							</thead>
+							<tbody>
 
-						</tbody>
-					</table>
-				</div>
+								<c:forEach var="n" items="${list}">
+									<tr>
+										<td>${n.id}</td>
+										<td class="title indent text-align-left"><a
+											href="detail?id=${n.id}">${n.title} <span>[${n.cmtCount}]</span></a></td>
+										<td>${n.writerId}</td>
+										<td><fmt:formatDate pattern="yyyy-MM-dd"
+												value="${n.regDate}" /></td>
+										<td><fmt:formatNumber value="${n.hit}" pattern="#,####"
+												type="number" /></td>
+										<td><input type="checkbox" name="open-id" value="${n.id}"></td>
+										<td><input type="checkbox" name="del-id" value="${n.id}"></td>
+									</tr>
+								</c:forEach>
 
-				<c:set var="page" value="${(empty param.p)? 1: param.p}" />
-				<c:set var="startNum" value="${page-(page-1)%5}" />
-				<c:set var="lastNum"
-					value="${fn:substringBefore(Math.ceil(count/10), '.')}" />
-				<!-- 10.1 -> 11 -> Math.ceil(10.2) -> 11.0 -->
-
-				<div class="indexer margin-top align-right">
-					<h3 class="hidden">현재 페이지</h3>
-					<div>
-						<span class="text-orange text-strong">${(empty param.p)? 1: param.p}</span>
-						/ ${lastNum} pages
+							</tbody>
+						</table>
 					</div>
-				</div>
+
+					<c:set var="page" value="${(empty param.p)? 1: param.p}" />
+					<c:set var="startNum" value="${page-(page-1)%5}" />
+					<c:set var="lastNum"
+						value="${fn:substringBefore(Math.ceil(count/10), '.')}" />
+					<!-- 10.1 -> 11 -> Math.ceil(10.2) -> 11.0 -->
+
+					<div class="indexer margin-top align-right">
+						<h3 class="hidden">현재 페이지</h3>
+						<div>
+							<span class="text-orange text-strong">${(empty param.p)? 1: param.p}</span>
+							/ ${lastNum} pages
+						</div>
+					</div>
+
+					<div class="text-align-right margin-top">
+						<input type="submit" class="btn-text btn-default" value="일괄공개">
+						<input type="submit" class="btn-text btn-default" value="일괄삭제">
+						<a class="btn-text btn-default" href="reg.html">글쓰기</a>
+					</div>
+				</form>
 
 				<div class="margin-top align-center pager">
 
@@ -246,6 +244,7 @@
 					</div>
 
 				</div>
+
 			</main>
 
 
