@@ -97,6 +97,67 @@ public class NoticeService {
 			ResultSet rs = st.executeQuery();
 
 			while(rs.next()){
+				
+				int id = rs.getInt("ID");
+				String title = rs.getString("TITLE");
+				String writerId = rs.getString("WRITER_ID");
+				Date regDate = rs.getDate("REGDATE");
+				int hit = rs.getInt("HIT");
+				String files = rs.getString("FILES");
+				int cmtCount = rs.getInt("CMT_COUNT");
+				boolean pub = rs.getBoolean("PUB");
+				
+				NoticeView notice = new NoticeView(
+					id,
+					title,
+					writerId,
+					regDate,
+					hit,
+					files,
+					//content,
+					cmtCount,
+					pub
+				);
+				list.add(notice);
+			}
+
+			rs.close();
+			st.close();
+			con.close();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public List<NoticeView> getNoticePubList(String field, String query, int page) {
+		List<NoticeView> list = new ArrayList<NoticeView>();
+		String sql = "SELECT * FROM ("
+				+ " SELECT ROWNUM NUM, N.* "
+				+ " FROM (SELECT * FROM NOTICE_VIEW "
+				+ "WHERE "+field+" LIKE ? ORDER BY REGDATE DESC) N"
+				+ ") "
+				+ "WHERE PUB=1 AND NUM BETWEEN ? AND ?";
+		
+		// 1, 11, 21, 31 -> 등차수열 -> an = 1+(page-1)*10
+		// 10, 20, 30 page*10
+		
+		String url = "jdbc:oracle:thin:@localhost:1521/xe";
+
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(url, "SONG", "gjgkgl135");
+			PreparedStatement st = con.prepareStatement(sql);
+			st.setString(1, "%"+query+"%");
+			st.setInt(2, 1+(page-1)*10);
+			st.setInt(3, page*10);
+			ResultSet rs = st.executeQuery();
+
+			while(rs.next()){
+				
 				int id = rs.getInt("ID");
 				String title = rs.getString("TITLE");
 				String writerId = rs.getString("WRITER_ID");
@@ -362,4 +423,5 @@ public class NoticeService {
 		}
 		return result;
 	}
+	
 }
