@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.song.web.entity.NoticeView;
 import com.song.web.service.NoticeService;
 
-@WebServlet("/admin/notice/list")
+@WebServlet("/admin/board/notice/list")
 public class ListController extends HttpServlet{
 	// 404 url이 없는경우.
 	// 405 url은 있으나 받을수있는 메서드가 없는경우.
@@ -25,11 +25,24 @@ public class ListController extends HttpServlet{
 		String[] openIds = request.getParameterValues("open-id");
 		String[] delIds = request.getParameterValues("del-id");
 		
-		for(String openId : openIds)
-			System.out.printf("openId: %s\n", openId);
+		String cmd = request.getParameter("cmd");
 		
-		for(String delId : delIds)
-			System.out.printf("delId: %s\n", delId);
+		switch(cmd) {
+			case "일괄공개" :
+				for(String openId : openIds)
+					System.out.printf("openId: %s\n", openId);
+				break;
+			case "일괄삭제" :
+				NoticeService service = new NoticeService();
+				int[] ids = new int[delIds.length];
+				for(int i=0; i<delIds.length; i++)
+					ids[i] = Integer.parseInt(delIds[i]);
+				
+				int result = service.deleteNoticeAll(ids);
+				break;
+		}
+		
+		response.sendRedirect("list");
 		
 	}
 	

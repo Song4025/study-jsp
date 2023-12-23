@@ -43,6 +43,5 @@ public class ListController extends HttpServlet {
 		request.setAttribute("count", count);
 		
 		request.getRequestDispatcher("/WEB-INF/view/notice/list.jsp").forward(request, response);
-		
 	}
 }

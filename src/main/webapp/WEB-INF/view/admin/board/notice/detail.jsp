@@ -1,9 +1,10 @@
+<%@page import="com.song.web.entity.Notice"%>
+<%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
 <!DOCTYPE html>
 <html>
 
@@ -67,8 +68,19 @@
 						<h1 class="hidden">회원메뉴</h1>
 						<ul>
 							<li><a href="/index.html">HOME</a></li>
-							<li><a href="/member/login.html">로그인</a></li>
-							<li><a href="/member/agree.html">회원가입</a></li>
+
+
+
+							<li>
+								<form action="/logout" method="post">
+									<input type="hidden" name="" value="" /> <input type="submit"
+										value="로그아웃"
+										style="border: none; background: none; vertical-align: middle; font-size: 10px; color: #979797; font-weight: bold;" />
+
+								</form>
+							</li>
+
+							<li><a href="/member/agree">회원가입</a></li>
 						</ul>
 					</nav>
 
@@ -127,11 +139,12 @@
 
 
 
-			<main class="main">
+
+			<main>
 				<h2 class="main title">공지사항</h2>
 
 				<div class="breadcrumb">
-					<h3 class="hidden">경로</h3>
+					<h3 class="hidden">breadlet</h3>
 					<ul>
 						<li>home</li>
 						<li>고객센터</li>
@@ -139,114 +152,73 @@
 					</ul>
 				</div>
 
-				<div class="search-form margin-top first align-right">
-					<h3 class="hidden">공지사항 검색폼</h3>
-					<form class="table-form">
-						<fieldset>
-							<legend class="hidden">공지사항 검색 필드</legend>
-							<label class="hidden">검색분류</label> <select name="f">
-								<option ${(param.f == "title")? "selected" : ""} value="title">제목</option>
-								<option ${(param.f == "writer_id")? "selected" : ""}
-									value="writer_id">작성자</option>
-							</select> <label class="hidden">검색어</label> <input type="text" name="q"
-								value="${param.q}" /> <input class="btn btn-search"
-								type="submit" value="검색" />
-						</fieldset>
-					</form>
+				<div class="margin-top first">
+					<h3 class="hidden">공지사항 내용</h3>
+					<table class="table">
+						<tbody>
+							<tr>
+								<th>제목</th>
+								<td class="text-align-left text-indent text-strong text-orange"
+									colspan="3">${n.title}</td>
+							</tr>
+							<tr>
+
+								<th>작성일</th>
+								<td class="text-align-left text-indent" colspan="3"><fmt:formatDate
+										pattern="yyyy-MM-dd hh:mm" value="${n.regDate}" /></td>
+							</tr>
+							<tr>
+								<th>작성자</th>
+								<td>${n.writerId}</td>
+								<th>조회수</th>
+								<td>${n.hit}</td>
+							</tr>
+							<tr>
+								<th>첨부파일</th>
+								<td colspan="3" style="text-align: left; text-indent: 10px;">
+									<c:forTokens var="fileName" items="${n.files}" delims=","
+										varStatus="st">
+										<c:set var="style" value="" />
+										<c:if test="${fn:endsWith(fileName, '.png')}">
+											<c:set var="style" value="font-weight:bold; color:red" />
+										</c:if>
+										<a download href="/upload/${fileName}" style="${style};">${fn:toUpperCase(fileName)}</a>
+										<c:if test="${!st.last}">
+										/
+									</c:if>
+									</c:forTokens>
+								</td>
+							</tr>
+							<tr class="content">
+								<td colspan="4">${n.content}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 
-				<form action="list" method="post">
-
-					<div class="notice margin-top">
-						<h3 class="hidden">공지사항 목록</h3>
-						<table class="table">
-							<thead>
-								<tr>
-									<th class="w60">번호</th>
-									<th class="expand">제목</th>
-									<th class="w100">작성자</th>
-									<th class="w100">작성일</th>
-									<th class="w60">조회수</th>
-									<th class="w40">공개</th>
-									<th class="w40">삭제</th>
-								</tr>
-							</thead>
-							<tbody>
-
-								<c:forEach var="n" items="${list}">
-									<tr>
-										<td>${n.id}</td>
-										<td class="title indent text-align-left"><a
-											href="detail?id=${n.id}">${n.title} <span>[${n.cmtCount}]</span></a></td>
-										<td>${n.writerId}</td>
-										<td><fmt:formatDate pattern="yyyy-MM-dd"
-												value="${n.regDate}" /></td>
-										<td><fmt:formatNumber value="${n.hit}" pattern="#,####"
-												type="number" /></td>
-										<td><input type="checkbox" name="open-id" value="${n.id}"></td>
-										<td><input type="checkbox" name="del-id" value="${n.id}"></td>
-									</tr>
-								</c:forEach>
-
-							</tbody>
-						</table>
-					</div>
-
-					<c:set var="page" value="${(empty param.p)? 1: param.p}" />
-					<c:set var="startNum" value="${page-(page-1)%5}" />
-					<c:set var="lastNum"
-						value="${fn:substringBefore(Math.ceil(count/10), '.')}" />
-					<!-- 10.1 -> 11 -> Math.ceil(10.2) -> 11.0 -->
-
-					<div class="indexer margin-top align-right">
-						<h3 class="hidden">현재 페이지</h3>
-						<div>
-							<span class="text-orange text-strong">${(empty param.p)? 1: param.p}</span>
-							/ ${lastNum} pages
-						</div>
-					</div>
-
-					<div class="text-align-right margin-top">
-						<input type="submit" class="btn-text btn-default" name="cmd" value="일괄공개">
-						<input type="submit" class="btn-text btn-default" name="cmd" value="일괄삭제">
-						<a class="btn-text btn-default" href="reg">글쓰기</a>
-					</div>
-				</form>
-
-				<div class="margin-top align-center pager">
-
-					<div>
-
-						<c:if test="${startNum>1}">
-							<a href="?p=${startNum-1}&t=&q=" class="btn btn-prev">이전</a>
-						</c:if>
-						<c:if test="${startNum<=1}">
-							<span class="btn btn-prev" onclick="alert('이전 페이지가 없습니다.');">이전</span>
-						</c:if>
-					</div>
-
-					<ul class="-list- center">
-						<c:if test="${(startNum+i) <= lastNum}">
-							<c:forEach var="i" begin="0" end="${lastNum-1}">
-								<li><a
-									class="-text- ${(page==(startNum+i))? 'orange' : ''} bold"
-									href="?p=${startNum+i}&f=${param.f}&q=${param.q}">${startNum+i}</a></li>
-							</c:forEach>
-						</c:if>
-					</ul>
-					<div>
-						<c:if test="${startNum+4 < lastNum}">
-							<a href="?p=${startNum+5}&t=&q=" class="btn btn-next">다음</a>
-						</c:if>
-						<c:if test="${startNum+4 >= lastNum}">
-							<span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
-						</c:if>
-					</div>
-
+				<div class="margin-top text-align-center">
+					<a class="btn-text btn-cancel" href="list">목록</a> <a
+						class="btn-text btn-default" href="edit">수정</a> <a
+						class="btn-text btn-default" href="del">삭제</a>
 				</div>
 
+				<div class="margin-top">
+					<table class="table border-top-default">
+						<tbody>
+							<tr>
+								<th>다음글</th>
+								<td colspan="3" class="text-align-left text-indent">다음글이
+									없습니다.</td>
+							</tr>
+							<tr>
+								<th>이전글</th>
+								<td colspan="3" class="text-align-left text-indent"><a
+									class="text-blue text-strong" href="">스프링 DI 예제 코드</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</main>
-
 
 		</div>
 	</div>
