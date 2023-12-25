@@ -1,6 +1,8 @@
 package com.song.web.controller.admin.notice;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -24,21 +26,43 @@ public class ListController extends HttpServlet{
 		//문자열로 오는데 키가다 같은데 값이 다 다르게 올때? 배열로받아!!
 		String[] openIds = request.getParameterValues("open-id");
 		String[] delIds = request.getParameterValues("del-id");
-		
 		String cmd = request.getParameter("cmd");
+		String ids_ = request.getParameter("ids");
+		// ids를 받아서 ids_에 넣어서 String[]배열로 변경시키겠다. split해서 구분자는 공백으로
+		String[] ids = ids_.trim().split(" ");
+		
+		NoticeService service = new NoticeService();
 		
 		switch(cmd) {
 			case "일괄공개" :
 				for(String openId : openIds)
 					System.out.printf("openId: %s\n", openId);
+				
+				List<String> oids = Arrays.asList(openIds);
+				List<String> cids = new ArrayList(Arrays.asList(ids));
+				cids.removeAll(oids);
+				System.out.println(Arrays.asList(ids));
+				System.out.println(oids);
+				System.out.println(cids);
+				/*for(int i=0; i<ids.length; i++) {
+					//현재 id가 오픈된 상태인지?
+					if(oids.contains(ids[i]))
+						
+				}*/
+				
+				// 아래 두개의 메서드는 transaction 처리되어야함 
+					
+				service.pubNoticeAll(opnIds, clsIds);
+				// service.closeNoticeList(clsIds);
+				
+				
 				break;
 			case "일괄삭제" :
-				NoticeService service = new NoticeService();
-				int[] ids = new int[delIds.length];
+				int[] ids1 = new int[delIds.length];
 				for(int i=0; i<delIds.length; i++)
-					ids[i] = Integer.parseInt(delIds[i]);
+					ids1[i] = Integer.parseInt(delIds[i]);
 				
-				int result = service.deleteNoticeAll(ids);
+				int result = service.deleteNoticeAll(ids1);
 				break;
 		}
 		
